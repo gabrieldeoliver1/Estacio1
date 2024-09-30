@@ -1,0 +1,92 @@
+import pandas as pd
+
+# Definindo os membros da família e suas respectivas tarefas
+familia = {
+    'Membro': ['Gabriel', 'Alan', 'Ester', 'Ana'],
+    'Tarefas': [
+        ['Limpar a sala', 'Cozinhar o jantar'],
+        ['Fazer compras', 'Lavar a louça'],
+        ['Organizar o quarto', 'Passear com o cachorro'],
+        ['Passar roupa', 'Limpar o banheiro']
+    ],
+    'Status': ['Livre', 'Livre', 'Livre', 'Livre']  # Status inicial
+}
+
+# Criando um DataFrame para o cronograma
+cronograma = pd.DataFrame(familia)
+
+# Adicionando dias da semana
+dias_da_semana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
+cronograma['Dia'] = dias_da_semana
+
+# Exibindo o cronograma
+print("Cronograma Semanal de Tarefas Domésticas:")
+print(cronograma)
+
+# Função para atualizar o progresso das tarefas
+def atualizar_progresso(membro, tarefa, status):
+    if membro in cronograma['Membro'].values:
+        index = cronograma[cronograma['Membro'] == membro].index[0]
+        if tarefa in cronograma['Tarefas'][index]:
+            cronograma.at[index, 'Status'] = status
+            print(f"Tarefa '{tarefa}' de {membro} marcada como '{status}'.")
+        else:
+            print(f"Tarefa '{tarefa}' não encontrada para {membro}.")
+    else:
+        print(f"Membro '{membro}' não encontrado.")
+
+# Função para ver quem está fazendo ou livre
+def verificar_status():
+    print("\nStatus das Tarefas:")
+    for index, row in cronograma.iterrows():
+        tarefas = ', '.join(row['Tarefas'])
+        print(f"{row['Membro']} - Tarefas: {tarefas} | Status: {row['Status']}")
+
+# Função para adicionar nova tarefa
+def adicionar_tarefa(membro, nova_tarefa):
+    if membro in cronograma['Membro'].values:
+        index = cronograma[cronograma['Membro'] == membro].index[0]
+        cronograma.at[index, 'Tarefas'].append(nova_tarefa)
+        print(f"Tarefa '{nova_tarefa}' adicionada para {membro}.")
+    else:
+        print(f"Membro '{membro}' não encontrado.")
+
+# Função para adicionar novo membro
+def adicionar_membro(novo_membro):
+    if novo_membro not in cronograma['Membro'].values:
+        cronograma.loc[len(cronograma)] = [novo_membro, [], 'Livre', '']  # Adiciona novo membro
+        print(f"Membro '{novo_membro}' adicionado com sucesso.")
+    else:
+        print(f"Membro '{novo_membro}' já existe.")
+
+# Função para verificar se um membro está ocupado com uma tarefa
+def verificar_ocupado(tarefa):
+    ocupados = []
+    for index, row in cronograma.iterrows():
+        if tarefa in row['Tarefas'] and row['Status'] == 'Em andamento':
+            ocupados.append(row['Membro'])
+    if ocupados:
+        print(f"Membros ocupados com a tarefa '{tarefa}': {', '.join(ocupados)}")
+    else:
+        print(f"Ninguém está ocupado com a tarefa '{tarefa}'.")
+
+# Exemplo de uso das funções
+atualizar_progresso('Gabriel', 'Fazer compras', 'Concluída')
+atualizar_progresso('Maria', 'Passear com o cachorro', 'Em andamento')
+
+# Verificando status das tarefas
+verificar_status()
+
+# Verificando se alguém está ocupado com uma tarefa específica
+verificar_ocupado('Cuidar do jardim')
+verificar_ocupado('Limpar a sala')
+
+# Adicionando nova tarefa
+adicionar_tarefa('Gabriel', 'Limpar a cozinha')
+
+# Adicionando novo membro
+adicionar_membro('Ana')
+
+# Exibindo o cronograma atualizado
+print("\nCronograma Atualizado:")
+print(cronograma)
